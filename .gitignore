@@ -20,6 +20,10 @@ venv/
 .idea/
 .vscode/
 
+# Prompt Optimisation
+wandb/
+results/
+
 # Data — large files not for version control
 images/
 images.zip
