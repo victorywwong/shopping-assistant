@@ -1,0 +1,30 @@
+# Environment
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Streamlit
+.streamlit/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Data — large files not for version control
+images/
+images.zip
+articles.csv
+*.pdf
+
+# Alembic
+alembic/versions/__pycache__/
