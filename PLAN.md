@@ -278,13 +278,4 @@ POSTGRES_DSN=postgresql://postgres:postgres@localhost:5433/digitalgenius
 | 3 | `guardrails.py` | ✅ Done | Keeps agent safe before exposing to conversation |
 | 4 | `orchestrator.py` | ✅ Done | Main LangGraph agent, all tools wired |
 | 5 | `app.py` (Streamlit UI) | ✅ Done | Makes it interactive |
-| 6 | `eval/` | 🔜 Next | Validates end-to-end quality |
-
----
-
-## Out of Scope (for this implementation)
-
-- Fine-tuning any model
-- Real inventory/stock management
-- User authentication
-- Database persistence between sessions (embeddings are cached, conversations are not)
+| 6 | `eval/` | ✅ Done | Validates end-to-end quality + GEPA prompt optimisation |

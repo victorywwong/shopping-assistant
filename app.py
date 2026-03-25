@@ -4,15 +4,36 @@ Run with: streamlit run app.py
 """
 
 import base64
+import re
 import uuid
+from pathlib import Path
+
 import streamlit as st
 
 from agents.orchestrator import chat
 from data.ingest import ingest
 
+IMAGES_DIR = Path(__file__).parent / "images"
+
 
 def image_to_base64(image_bytes: bytes) -> str:
     return base64.b64encode(image_bytes).decode("utf-8")
+
+
+def extract_article_ids(text: str) -> list[str]:
+    """Return unique article IDs (10-digit, leading 0) mentioned in text."""
+    return list(dict.fromkeys(re.findall(r"\b0\d{9}\b", text)))
+
+
+def render_product_images(article_ids: list[str]):
+    """Display product images in a row for any IDs that have a local image file."""
+    available = [aid for aid in article_ids if (IMAGES_DIR / f"{aid}.jpg").exists()]
+    if not available:
+        return
+    cols = st.columns(min(len(available), 4))
+    for col, aid in zip(cols, available):
+        with col:
+            st.image(str(IMAGES_DIR / f"{aid}.jpg"), caption=aid, use_container_width=True)
 
 # ---------------------------------------------------------------------------
 # One-time setup
@@ -55,6 +76,8 @@ for msg in st.session_state.display_messages:
         if msg.get("image_bytes"):
             st.image(msg["image_bytes"], width=260)
         st.markdown(msg["content"])
+        if msg["role"] == "assistant":
+            render_product_images(extract_article_ids(msg["content"]))
 
 # ---------------------------------------------------------------------------
 # Input area
@@ -95,6 +118,7 @@ if user_input or uploaded_file:
                 image_base64=image_base64,
             )
         st.markdown(response)
+        render_product_images(extract_article_ids(response))
 
     st.session_state.display_messages.append({
         "role": "assistant",

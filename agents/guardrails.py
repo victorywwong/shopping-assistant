@@ -39,12 +39,18 @@ def _get_llm() -> AzureChatOpenAI:
 
 def classify(user_message: str) -> str:
     """Returns 'in_scope', 'out_of_scope', or 'unsafe'."""
-    response = _get_llm().invoke([
-        SystemMessage(content=_SYSTEM_PROMPT),
-        HumanMessage(content=user_message),
-    ])
+    from openai import BadRequestError
+    try:
+        response = _get_llm().invoke([
+            SystemMessage(content=_SYSTEM_PROMPT),
+            HumanMessage(content=user_message),
+        ])
+    except BadRequestError as e:
+        if e.code == "content_filter":
+            # Azure content filter already determined the message is unsafe
+            return "unsafe"
+        raise
     result = response.content.strip().lower()
     if result not in ("in_scope", "out_of_scope", "unsafe"):
-        # Default to in_scope if the model returns something unexpected
         return "in_scope"
     return result
